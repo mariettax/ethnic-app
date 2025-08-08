@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethnic - Local Food Finder</title>
+    <style>
+        /* General Styles & Color Palette */
+        :root {
+            --primary-color: #2D6A4F; /* Deep green - Nature, freshness, trust */
+            --secondary-color: #F4A261; /* Warm orange - Warmth, food, cultural warmth */
+            --accent-color: #264653; /* Indigo/Blue-gray - Depth, balance */
+            --background-color: #FAF9F6; /* Soft off-white - Clean, breathable canvas */
+            --highlight-color: #E9C46A; /* Sandy gold - Flavor, call to action */
+            --warning-color: #E76F51; /* Terracotta red - Accessibility, caution */
+            --text-color: #264653;
+            --placeholder-color: #A0A0A0;
+            --footer-bg-color: #F0EDE9; /* Lighter background for footer */
+        }
+
+        /* Basic Resets & Typography */
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif; /* Fallback fonts */
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 16px; /* Base font size for accessibility */
+        }
+
+        h1, h2, h3, h4 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        /* Container for Mobile-First Approach */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* --- Header & Navigation --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            background-color: var(--background-color);
+            z-index: 1000;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header-logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .header-location {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .header-menu-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* --- Search Bar --- */
+        .search-container {
+            padding: 1rem 0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            -webkit-appearance: none; /* Remove default iOS styling */
+            transition: border-color 0.2s ease;
+        }
+        
+        .search-input::placeholder {
+            color: var(--placeholder-color);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--highlight-color); /* Input field focus border */
+        }
+
+        /* --- Filters --- */
+        .filters-container {
+            display: flex;
+            overflow-x: scroll; /* Allows horizontal scrolling on small screens */
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 1rem;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .filters-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for a cleaner look */
+        }
+
+        .filter-pill {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            -webkit-user-select: none; /* Prevents text selection on tap */
+            user-select: none;
+        }
+        
+        .filter-pill.active {
+            background-color: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Map Section --- */
+        #map {
+            height: 250px; /* Fixed height for the map */
+            width: 100%;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: #e0e0e0; /* Placeholder background */
+        }
+
+        /* --- Main Content Section (for store list) --- */
+        .store-list-container {
+            padding-top: 1rem;
+        }
+
+        .store-card {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .store-card-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            margin-right: 1rem;
+            flex-shrink: 0; /* Prevent image from shrinking */
+        }
+        
+        .store-card-content {
+            flex-grow: 1;
+        }
+        
+        .store-card-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            color: var(--accent-color);
+        }
+        
+        .store-card-tags {
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .store-card-address {
+            font-size: 0.85rem;
+            color: var(--text-color);
+        }
+
+        .store-card-arrow {
+            font-size: 1.5rem;
+            color: var(--highlight-color);
+            margin-left: 1rem;
+        }
+
+        /* --- Store Detail Overlay --- */
+        .store-detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .store-detail-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .store-detail-content {
+            background-color: var(--background-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .store-detail-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--accent-color);
+        }
+
+        .store-detail-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            margin-bottom: 1rem;
+        }
+
+        .store-detail-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .store-detail-tags {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .store-detail-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .store-detail-info strong {
+            color: var(--accent-color);
+        }
+
+        .store-detail-directions-btn, .suggest-recipes-btn {
+            display: block;
+            width: 100%;
+            min-width: 200px; /* Minimum width for CTA buttons */
+            padding: 0.75rem;
+            text-align: center;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1.5rem;
+            transition: background-color 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .store-detail-directions-btn:hover {
+            background-color: #d8b35a; /* Slightly darker highlight */
+        }
+
+        .suggest-recipes-btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            margin-top: 1rem; /* Adjust margin for spacing between buttons */
+        }
+
+        .suggest-recipes-btn:hover {
+            background-color: #225a41; /* Slightly darker primary */
+        }
+
+        .recipes-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .recipes-section h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .recipes-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recipes-section li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .recipes-section li::before {
+            content: '🥣'; /* Bowl emoji for list item */
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .recipes-section li strong {
+            display: block;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+        }
+
+        /* --- Form/Alert Styles --- */
+        .error-message {
+            color: var(--warning-color); /* Error Text */
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .success-message {
+            color: var(--primary-color); /* Success Text */
+            background-color: rgba(45, 106, 79, 0.1); /* Light green background */
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            background-color: var(--footer-bg-color);
+            padding: 1.5rem 1rem;
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        .footer nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 480px) {
+            body {
+                font-size: 15px;
+            }
+            .header-logo {
+                font-size: 1.25rem;
+            }
+            .store-detail-name {
+                font-size: 1.5rem;
+            }
+            .store-detail-directions-btn, .suggest-recipes-btn {
+                min-width: unset; /* Remove min-width on very small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Header & Nav -->
+        <header class="header">
+            <a href="#" class="header-logo">Ethnic</a>
+            <div class="header-location">London, ON</div>
+            <div class="header-menu-icon">☰</div>
+        </header>
+
+        <!-- Search Bar -->
+        <section class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Search by food, culture, or store name...">
+        </section>
+
+        <!-- Filters -->
+        <section class="filters-container" id="filters-container">
+            <div class="filter-pill" data-filter-type="culture" data-filter-value="African">African</div>
+            <div class="filter-pill" data-filter-type="culture" data-filter-value="Asian">Asian</div>
+            <div class="filter-pill" data-filter-type="culture" data-filter-value="Arab">Arab</div>
+            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Halal">Halal</div>
+            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Kosher">Kosher</div>
+            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Vegan">Vegan</div>
+            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Gluten-free">Gluten-free</div>
+            <div class="filter-pill" data-filter-type="product" data-filter-value="Groceries">Groceries</div>
+            <div class="filter-pill" data-filter-type="product" data-filter-value="Restaurant">Restaurant</div>
+            <div class="filter-pill" data-filter-type="product" data-filter-value="Butcher">Butcher</div>
+            <div class="filter-pill" data-filter-type="product" data-filter-value="Bakery">Bakery</div>
+        </section>
+
+        <!-- Map Section -->
+        <section id="map"></section>
+
+        <!-- Store Listings -->
+        <section class="store-list-container" id="store-list-container">
+            <h2>Stores near you</h2>
+            <!-- Store cards will be dynamically inserted here by JavaScript -->
+            <p id="no-results-message" style="display: none; text-align: center; color: var(--text-color);">No stores found matching your criteria.</p>
+        </section>
+
+    </div>
+
+    <!-- Store Detail Overlay -->
+    <div class="store-detail-overlay" id="store-detail-overlay">
+        <div class="store-detail-content">
+            <span class="store-detail-close" id="store-detail-close">&times;</span>
+            <img id="detail-store-image" class="store-detail-image" src="https://placehold.co/400x200/F4A261/264653?text=Storefront" alt="Store Image">
+            <h3 class="store-detail-name" id="detail-store-name"></h3>
+            <p class="store-detail-tags" id="detail-store-tags"></p>
+            <div class="store-detail-info">
+                <p><strong>Address:</strong> <span id="detail-store-address"></span></p>
+                <p><strong>Hours:</strong> <span id="detail-store-hours"></span></p>
+                <p><strong>Contact:</strong> <span id="detail-store-contact"></span></p>
+                <p><strong>Description:</strong> <span id="detail-store-description"></span></p>
+            </div>
+            <a href="#" id="detail-store-directions-btn" target="_blank" class="store-detail-directions-btn">Get Directions</a>
+            
+            <!-- New button for Gemini API integration -->
+            <button id="suggest-recipes-btn" class="suggest-recipes-btn">✨ Suggest Recipes</button>
+
+            <!-- Section to display generated recipes -->
+            <div class="recipes-section" id="recipes-section" style="display: none;">
+                <h4>Suggested Recipes:</h4>
+                <p id="recipes-loading-message" style="display: none; text-align: center; color: var(--text-color);">Generating recipes...</p>
+                <ul id="recipes-list">
+                    <!-- Recipes will be inserted here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <nav>
+            <a href="#">About Ethnic</a> | 
+            <a href="#">Submit a Store</a> | 
+            <a href="#">Contact</a>
+        </nav>
+        <p>&copy; 2025 Ethnic. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Initialize Google Map variable
+        let map;
+        let markers = []; // Array to hold map markers
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const filtersContainer = document.getElementById('filters-container');
+            const searchInput = document.getElementById('search-input');
+            const storeListContainer = document.getElementById('store-list-container');
+            const noResultsMessage = document.getElementById('no-results-message');
+            const storeDetailOverlay = document.getElementById('store-detail-overlay');
+            const storeDetailCloseBtn = document.getElementById('store-detail-close');
+            const suggestRecipesBtn = document.getElementById('suggest-recipes-btn');
+            const recipesSection = document.getElementById('recipes-section');
+            const recipesList = document.getElementById('recipes-list');
+            const recipesLoadingMessage = document.getElementById('recipes-loading-message');
+
+
+            // Elements for store detail overlay
+            const detailStoreImage = document.getElementById('detail-store-image');
+            const detailStoreName = document.getElementById('detail-store-name');
+            const detailStoreTags = document.getElementById('detail-store-tags');
+            const detailStoreAddress = document.getElementById('detail-store-address');
+            const detailStoreHours = document.getElementById('detail-store-hours');
+            const detailStoreContact = document.getElementById('detail-store-contact'); 
+            const detailStoreDescription = document.getElementById('detail-store-description');
+            const detailStoreDirectionsBtn = document.getElementById('detail-store-directions-btn');
+
+            let activeFilters = {
+                culture: [],
+                dietary: [],
+                product: [],
+                search: ''
+            };
+
+            // Variable to hold the currently displayed store's data for recipe suggestion
+            let currentStoreData = null;
+
+            // --- Google Maps Initialization ---
+            // This function is called by the Google Maps API script once it's loaded
+            window.initMap = function() {
+                // Default to London, ON coordinates
+                const london = { lat: 42.9849, lng: -81.2453 };
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: london,
+                    zoom: 12,
+                    mapTypeControl: false, // Hide map type controls
+                    streetViewControl: false, // Hide street view control
+                    fullscreenControl: false // Hide fullscreen control
+                });
+                fetchAndRenderStores(); // Fetch and render stores after map is initialized
+            };
+
+            // --- Filter Logic ---
+            filtersContainer.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.classList.contains('filter-pill')) {
+                    const filterType = target.dataset.filterType;
+                    const filterValue = target.dataset.filterValue;
+
+                    target.classList.toggle('active');
+
+                    if (target.classList.contains('active')) {
+                        activeFilters[filterType].push(filterValue);
+                    } else {
+                        activeFilters[filterType] = activeFilters[filterType].filter(
+                            (item) => item !== filterValue
+                        );
+                    }
+                    fetchAndRenderStores();
+                }
+            });
+
+            // --- Search Logic ---
+            searchInput.addEventListener('input', (event) => {
+                activeFilters.search = event.target.value.toLowerCase();
+                fetchAndRenderStores();
+            });
+
+            // --- Fetch and Render Stores ---
+            async function fetchAndRenderStores() {
+                // Construct query parameters based on active filters
+                const queryParams = new URLSearchParams();
+                if (activeFilters.culture.length > 0) {
+                    queryParams.append('culture', activeFilters.culture.join(','));
+                }
+                if (activeFilters.dietary.length > 0) {
+                    queryParams.append('dietary', activeFilters.dietary.join(','));
+                }
+                if (activeFilters.product.length > 0) {
+                    queryParams.append('product', activeFilters.product.join(','));
+                }
+                if (activeFilters.search) {
+                    queryParams.append('search', activeFilters.search);
+                }
+
+                try {
+                    const response = await fetch(`/api/stores?${queryParams.toString()}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const stores = await response.json();
+                    renderStoreCards(stores);
+                    updateMapMarkers(stores); // Update map markers after fetching stores
+                } catch (error) {
+                    console.error('Error fetching stores:', error);
+                    storeListContainer.innerHTML = '<p class="error-message">Failed to load stores. Please try again later.</p>';
+                    noResultsMessage.style.display = 'none';
+                }
+            }
+
+            function renderStoreCards(stores) {
+                storeListContainer.innerHTML = '<h2>Stores near you</h2>'; // Clear previous listings
+                if (stores.length === 0) {
+                    noResultsMessage.style.display = 'block';
+                } else {
+                    noResultsMessage.style.display = 'none';
+                    stores.forEach(store => {
+                        const storeCard = document.createElement('div');
+                        storeCard.classList.add('store-card');
+                        storeCard.dataset.storeId = store.id; // Store ID for detail lookup
+
+                        // Determine image text based on store tags
+                        let imageText = 'Market';
+                        if (store.tags.includes('African')) imageText = 'African';
+                        else if (store.tags.includes('Asian')) imageText = 'Asian';
+                        else if (store.tags.includes('Halal')) imageText = 'Halal';
+                        else if (store.tags.includes('Butcher')) imageText = 'Butcher';
+                        else if (store.tags.includes('Groceries')) imageText = 'Produce';
+                        else if (store.tags.includes('Restaurant')) imageText = 'Food';
+
+
+                        storeCard.innerHTML = `
+                            <img class="store-card-image" src="https://placehold.co/80x80/2D6A4F/FAF9F6?text=${imageText}" alt="${store.name} image">
+                            <div class="store-card-content">
+                                <div class="store-card-name">${store.name}</div>
+                                <div class="store-card-tags">${store.tags.join(', ')}</div>
+                                <div class="store-card-address">${store.address}</div>
+                            </div>
+                            <div class="store-card-arrow">→</div>
+                        `;
+                        storeListContainer.appendChild(storeCard);
+
+                        // Add click listener to open detail overlay
+                        storeCard.addEventListener('click', () => openStoreDetail(store));
+                    });
+                }
+            }
+
+            // --- Google Maps Marker Update Logic ---
+            function updateMapMarkers(stores) {
+                // Clear existing markers
+                for (let i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+                markers = []; // Reset markers array
+
+                const bounds = new google.maps.LatLngBounds();
+
+                stores.forEach(store => {
+                    if (store.latitude && store.longitude) {
+                        const position = { lat: store.latitude, lng: store.longitude };
+                        const marker = new google.maps.Marker({
+                            position: position,
+                            map: map,
+                            title: store.name
+                        });
+
+                        // Add info window for marker
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: `<strong>${store.name}</strong><br>${store.address}`
+                        });
+
+                        marker.addListener('click', () => {
+                            infoWindow.open(map, marker);
+                            openStoreDetail(store); // Also open detail overlay on marker click
+                        });
+
+                        markers.push(marker);
+                        bounds.extend(position);
+                    }
+                });
+
+                // Fit map to markers if there are any
+                if (stores.length > 0) {
+                    map.fitBounds(bounds);
+                    // If there's only one marker, set a reasonable zoom level
+                    if (stores.length === 1) {
+                        map.setZoom(14); 
+                    }
+                } else {
+                    // If no stores, center back to London
+                    map.setCenter({ lat: 42.9849, lng: -81.2453 });
+                    map.setZoom(12);
+                }
+            }
+
+
+            // --- Store Detail Overlay Logic ---
+            function openStoreDetail(store) {
+                currentStoreData = store; // Store the current store data
+                
+                // Set detail image based on store tags
+                let detailImageText = 'Storefront';
+                if (store.tags.includes('African')) detailImageText = 'African+Store';
+                else if (store.tags.includes('Asian')) detailImageText = 'Asian+Market';
+                else if (store.tags.includes('Halal')) detailImageText = 'Halal+Butcher';
+                else if (store.tags.includes('Groceries')) detailImageText = 'Produce+Aisle';
+                else if (store.tags.includes('Restaurant')) detailImageText = 'Restaurant+Interior';
+
+                detailStoreImage.src = `https://placehold.co/400x200/F4A261/264653?text=${detailImageText}`;
+                detailStoreImage.alt = `${store.name} image`;
+
+                detailStoreName.textContent = store.name;
+                detailStoreTags.textContent = store.tags.join(', ');
+                detailStoreAddress.textContent = store.address;
+                detailStoreHours.textContent = store.hours || 'Not available';
+                detailStoreContact.textContent = store.contact || 'Not available';
+                detailStoreDescription.textContent = store.description || 'No description available.';
+                
+                // Google Maps directions link
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.address)}`;
+                detailStoreDirectionsBtn.href = mapsUrl;
+
+                // Reset recipes section
+                recipesList.innerHTML = '';
+                recipesSection.style.display = 'none';
+                recipesLoadingMessage.style.display = 'none';
+                suggestRecipesBtn.disabled = false; // Enable button
+
+                storeDetailOverlay.classList.add('active');
+            }
+
+            storeDetailCloseBtn.addEventListener('click', () => {
+                storeDetailOverlay.classList.remove('active');
+            });
+
+            storeDetailOverlay.addEventListener('click', (event) => {
+                // Close overlay if clicked outside the content box
+                if (event.target === storeDetailOverlay) {
+                    storeDetailOverlay.classList.remove('active');
+                }
+            });
+
+            // --- Gemini API Call for Recipe Suggestion ---
+            suggestRecipesBtn.addEventListener('click', async () => {
+                if (!currentStoreData) return;
+
+                recipesSection.style.display = 'block';
+                recipesLoadingMessage.style.display = 'block';
+                recipesList.innerHTML = ''; // Clear previous recipes
+                suggestRecipesBtn.disabled = true; // Disable button during generation
+
+                const prompt = `Given the store named '${currentStoreData.name}' which is described as '${currentStoreData.description}' and specializes in the following categories: ${currentStoreData.tags.join(', ')}. Please suggest 3-5 unique and culturally relevant recipes that could be made using ingredients typically found at this type of store. For each recipe, provide only the recipe name and a very brief (1-2 sentence) description. Format the output as a numbered list.`;
+
+                try {
+                    const generatedText = await callGeminiAPI(prompt);
+                    recipesLoadingMessage.style.display = 'none';
+                    renderRecipes(generatedText);
+                } catch (error) {
+                    console.error('Failed to suggest recipes:', error);
+                    recipesLoadingMessage.textContent = 'Failed to load recipes. Please try again.';
+                    recipesLoadingMessage.classList.add('error-message'); // Apply error style
+                } finally {
+                    suggestRecipesBtn.disabled = false; // Re-enable button
+                }
+            });
+
+            async function callGeminiAPI(prompt) {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Leave as-is, Canvas will provide it
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                let retries = 0;
+                const maxRetries = 5;
+                const baseDelay = 1000; // 1 second
+
+                while (retries < maxRetries) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 429) { // Too Many Requests
+                                retries++;
+                                const delay = baseDelay * Math.pow(2, retries - 1);
+                                console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds... (Attempt ${retries}/${maxRetries})`);
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                continue; // Try again
+                            }
+                            throw new Error(`API error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            return result.candidates[0].content.parts[0].text;
+                        } else {
+                            console.error('Unexpected Gemini API response structure:', result);
+                            return 'Could not generate recipes. Please try again.';
+                        }
+                    } catch (error) {
+                        console.error('Error calling Gemini API:', error);
+                        // For other errors, we might not retry or retry fewer times
+                        throw error; // Re-throw to be caught by the caller
+                    }
+                }
+                return 'Failed to generate recipes after multiple retries.';
+            }
+
+            function renderRecipes(recipesText) {
+                recipesList.innerHTML = ''; // Clear previous recipes
+                const recipes = recipesText.split('\n').filter(line => line.trim() !== '');
+                recipes.forEach(recipeLine => {
+                    const listItem = document.createElement('li');
+                    let recipeName = '';
+                    let description = '';
+
+                    // Attempt to split by the first colon, if available
+                    const firstColonIndex = recipeLine.indexOf(':');
+                    if (firstColonIndex !== -1) {
+                        // Extract recipe name (removing potential numbering like "1. ")
+                        recipeName = recipeLine.substring(0, firstColonIndex).replace(/^\d+\.\s*/, '').trim();
+                        description = recipeLine.substring(firstColonIndex + 1).trim();
+                    } else {
+                        // If no colon, treat the whole line as the recipe name
+                        recipeName = recipeLine.replace(/^\d+\.\s*/, '').trim();
+                        description = 'No description provided.'; // Default description
+                    }
+                    
+                    if (recipeName) { // Only render if a name was found
+                        listItem.innerHTML = `<strong>${recipeName}</strong>: ${description}`;
+                        recipesList.appendChild(listItem);
+                    }
+                });
+            }
+
+            // Initial fetch is now called by initMap
+            // fetchAndRenderStores();
+        });
+    </script>
+    <!-- Google Maps API Script -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBf4oI63Sd0OCuzdw18uZT3qvutcLL966I&callback=initMap"></script>
+</body>
+</html>

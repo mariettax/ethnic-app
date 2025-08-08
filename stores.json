@@ -1,0 +1,68 @@
+[
+    {
+        "id": "1",
+        "name": "AfroWorld Groceries",
+        "address": "123 Main Street, London, ON N6A 1A1",
+        "hours": "Mon-Sat: 9 AM - 7 PM, Sun: 11 AM - 5 PM",
+        "contact": "519-555-1234, info@afroworld.com",
+        "description": "Your one-stop shop for authentic West African ingredients, spices, and fresh produce. We specialize in yam flour, egusi, ogbono, and a variety of halal meats.",
+        "tags": ["African", "Halal", "Groceries", "Butcher"],
+        "latitude": 42.9849,
+        "longitude": -81.2453
+    },
+    {
+        "id": "2",
+        "name": "Bombay Bites",
+        "address": "456 King Street, London, ON N6B 1C2",
+        "hours": "Mon-Sun: 11 AM - 10 PM",
+        "contact": "519-555-5678, orders@bombaybites.ca",
+        "description": "Experience the rich flavors of India with our traditional dishes. We offer a wide range of vegetarian and vegan options, along with popular Indian groceries.",
+        "tags": ["Asian", "Indian", "Restaurant", "Vegan", "Groceries"],
+        "latitude": 42.9821,
+        "longitude": -81.2497
+    },
+    {
+        "id": "3",
+        "name": "Middle Eastern Delights",
+        "address": "789 Queen Avenue, London, ON N6C 3A3",
+        "hours": "Tue-Sun: 10 AM - 8 PM",
+        "contact": "519-555-9012",
+        "description": "Authentic Middle Eastern bakery and grocery store. Freshly baked pita, baklava, and a selection of halal meats and imported goods.",
+        "tags": ["Arab", "Middle Eastern", "Bakery", "Halal", "Groceries"],
+        "latitude": 42.9785,
+        "longitude": -81.2405
+    },
+    {
+        "id": "4",
+        "name": "The Gluten-Free Pantry",
+        "address": "101 Oxford Street E, London, ON N6A 1T1",
+        "hours": "Mon-Sat: 9:30 AM - 6 PM",
+        "contact": "519-555-3456",
+        "description": "Dedicated to providing a safe and delicious shopping experience for those with gluten sensitivities. Find a wide array of gluten-free breads, pastas, snacks, and more.",
+        "tags": ["Gluten-free", "Groceries"],
+        "latitude": 42.9890,
+        "longitude": -81.2370
+    },
+    {
+        "id": "5",
+        "name": "Korean BBQ House",
+        "address": "222 Richmond Street, London, ON N6A 3C2",
+        "hours": "Mon-Sun: 12 PM - 10:30 PM",
+        "contact": "519-555-6789",
+        "description": "Authentic Korean BBQ experience with a wide selection of marinated meats and traditional side dishes. Vegan options available.",
+        "tags": ["Asian", "Korean", "Restaurant", "Vegan"],
+        "latitude": 42.9800,
+        "longitude": -81.2500
+    },
+    {
+        "id": "6",
+        "name": "Caribbean Spice Market",
+        "address": "333 Dundas Street, London, ON N6B 1W1",
+        "hours": "Mon-Sat: 10 AM - 7 PM",
+        "contact": "519-555-1122",
+        "description": "Bringing the vibrant flavors of the Caribbean to London. Fresh spices, exotic fruits, and ingredients for classic Caribbean dishes.",
+        "tags": ["African", "Caribbean", "Groceries"],
+        "latitude": 42.9835,
+        "longitude": -81.2470
+    }
+]

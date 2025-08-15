@@ -1,819 +1,566 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethnic - Local Food Finder</title>
-    <style>
-        /* General Styles & Color Palette */
-        :root {
-            --primary-color: #2D6A4F; /* Deep green - Nature, freshness, trust */
-            --secondary-color: #F4A261; /* Warm orange - Warmth, food, cultural warmth */
-            --accent-color: #264653; /* Indigo/Blue-gray - Depth, balance */
-            --background-color: #FAF9F6; /* Soft off-white - Clean, breathable canvas */
-            --highlight-color: #E9C46A; /* Sandy gold - Flavor, call to action */
-            --warning-color: #E76F51; /* Terracotta red - Accessibility, caution */
-            --text-color: #264653;
-            --placeholder-color: #A0A0A0;
-            --footer-bg-color: #F0EDE9; /* Lighter background for footer */
-        }
+import React, { useState } from 'react';
+// Importing Lucide icons - these will be used instead of emojis
+import {
+  Search, MapPin, Star, Users, CheckCircle, Lightbulb, X,
+  ShoppingBag, Award, HeartHandshake, BookOpenText, DollarSign, PlusCircle, Globe
+} from 'lucide-react'; // Added more icons for new sections
 
-        /* Basic Resets & Typography */
-        body {
-            font-family: 'Inter', 'Poppins', sans-serif; /* Fallback fonts */
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            font-size: 16px; /* Base font size for accessibility */
-        }
+// Main App Component
+const App = () => {
+  // State to control the visibility of modals
+  const [showAboutUsModal, setShowAboutUsModal] = useState(false);
+  const [showFaqModal, setShowFaqModal] = useState(false); // New state for FAQ modal
 
-        h1, h2, h3, h4 {
-            margin-top: 0;
-            color: var(--accent-color);
-        }
+  // Define your color palette using Tailwind CSS classes for consistency
+  const primaryColor = 'bg-blue-600';
+  const highlightColor = 'bg-amber-500';
+  const primaryTextColor = 'text-blue-600';
+  const highlightTextColor = 'text-amber-500';
+  const textWhite = 'text-white';
+  const textGray = 'text-gray-700';
+  const bgGrayLight = 'bg-gray-100';
+  const borderBlue = 'border-blue-600';
+  const textGreenSuccess = 'text-green-600';
+  const textRedFailure = 'text-red-600';
 
-        /* Container for Mobile-First Approach */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
 
-        /* --- Header & Navigation --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            background-color: var(--background-color);
-            z-index: 1000;
-            border-bottom: 1px solid #e0e0e0;
-        }
+  // --- Components for sections of the page ---
 
-        .header-logo {
-            font-weight: bold;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
+  // Hero Section with gradient background on CTA
+  const HeroSection = () => (
+    <section className="relative h-screen flex items-center justify-center text-center bg-gray-900 overflow-hidden">
+      {/* Background overlay with subtle pattern or gradient - adjust for taste */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950 opacity-90"></div>
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] opacity-10"></div> {/* Subtle texture */}
 
-        .header-location {
-            font-size: 0.9rem;
-            color: var(--text-color);
-        }
+      <div className="relative z-10 p-6 max-w-4xl mx-auto">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-white leading-tight mb-4 drop-shadow-lg">
+          Because 'Near Me' Isn’t Enough.
+        </h1>
+        <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl mx-auto">
+          Find authentic cultural groceries, trusted by your community — fast.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          <input
+            type="text"
+            placeholder="Search by cuisine, product, or location..."
+            className="w-full sm:w-80 px-6 py-3 rounded-full border-2 border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-300 shadow-lg bg-white text-gray-800"
+          />
+          <button
+            className={`px-8 py-3 rounded-full ${primaryColor} ${textWhite} text-lg font-semibold hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-xl
+                        relative overflow-hidden group`} // Added for gradient/pulse effect
+          >
+            {/* Subtle gradient overlay on hover */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <span className="relative z-10">Find Stores Near Me</span>
+          </button>
+        </div>
+        {/* Prominent "Always FREE to search" message near CTA */}
+        <p className={`mt-4 text-lg font-semibold ${highlightTextColor} bg-white bg-opacity-90 rounded-lg py-2 px-4 inline-block shadow-md border-2 ${borderBlue}`}>
+          Always FREE to search and discover!
+        </p>
+      </div>
+    </section>
+  );
 
-        .header-menu-icon {
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
+  // How It Works Section with professional icons
+  const HowItWorksSection = () => (
+    <section className={`py-16 ${bgGrayLight} text-center`}>
+      <h2 className={`text-4xl font-bold ${primaryTextColor} mb-12`}>How It Works</h2>
+      <div className="flex flex-wrap justify-center gap-10 px-4">
+        <div className="w-full md:w-1/4 p-6 bg-white rounded-xl shadow-lg border border-gray-200 transform hover:scale-105 transition-transform duration-300 ease-in-out">
+          <Search size={48} className={`mx-auto mb-4 ${highlightTextColor}`} />
+          <h3 className="text-2xl font-semibold mb-2">1. Search by Culture/Diet</h3>
+          <p className={textGray}>Enter your needs. Our smart filters connect you to specific cultural and dietary options.</p>
+        </div>
+        <div className="w-full md:w-1/4 p-6 bg-white rounded-xl shadow-lg border border-gray-200 transform hover:scale-105 transition-transform duration-300 ease-in-out">
+          <CheckCircle size={48} className={`mx-auto mb-4 ${highlightTextColor}`} />
+          <h3 className="text-2xl font-semibold mb-2">2. See Verified Stores</h3>
+          <p className={textGray}>Browse curated listings of authentic, community-trusted stores and their offerings.</p>
+        </div>
+        <div className="w-full md:w-1/4 p-6 bg-white rounded-xl shadow-lg border border-gray-200 transform hover:scale-105 transition-transform duration-300 ease-in-out">
+          <ShoppingBag size={48} className={`mx-auto mb-4 ${highlightTextColor}`} />
+          <h3 className="text-2xl font-semibold mb-2">3. Get What You Need</h3>
+          <p className={textGray}>Find directions, contact info, and discover new culinary experiences.</p>
+        </div>
+      </div>
+    </section>
+  );
 
-        /* --- Search Bar --- */
-        .search-container {
-            padding: 1rem 0;
-        }
+  // Trust Section with logos and press badges (placeholders for now)
+  const TrustSection = () => (
+    <section className="py-12 bg-white text-center">
+      <p className="text-xl font-semibold text-gray-700 mb-8">Trusted by diaspora families in London and beyond.</p>
+      <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 px-4">
+        {/* Placeholder Logos */}
+        <img src="https://placehold.co/120x50/F0EDE9/264653?text=Brand+A" alt="Trusted Brand A" className="max-h-12 opacity-70 hover:opacity-100 transition-opacity" />
+        <img src="https://placehold.co/120x50/F0EDE9/264653?text=Community+X" alt="Trusted Community X" className="max-h-12 opacity-70 hover:opacity-100 transition-opacity" />
+        <img src="https://placehold.co/120x50/F0EDE9/264653?text=Food+Org+Y" alt="Trusted Food Organization Y" className="max-h-12 opacity-70 hover:opacity-100 transition-opacity" />
+        {/* Placeholder Press Badges */}
+        <img src="https://placehold.co/150x50/F0EDE9/2D6A4F?text=As+Featured+In" alt="As Featured In" className="max-h-12 opacity-80 hover:opacity-100 transition-opacity" />
+      </div>
+    </section>
+  );
 
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: 2rem;
-            border: 1px solid #e0e0e0;
-            font-size: 1rem;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            -webkit-appearance: none; /* Remove default iOS styling */
-            transition: border-color 0.2s ease;
-        }
-        
-        .search-input::placeholder {
-            color: var(--placeholder-color);
-        }
+  // Problem/Solution Section
+  const ProblemSolutionSection = () => (
+    <section className={`py-16 ${bgGrayLight} text-center`}>
+      <h2 className={`text-4xl font-bold ${primaryTextColor} mb-12`}>We solve what Google misses.</h2>
+      <div className="flex flex-col md:flex-row justify-center gap-8 px-4 max-w-4xl mx-auto">
+        <div className="w-full md:w-1/2 p-6 bg-red-50 border-2 border-red-200 rounded-xl shadow-lg">
+          <h3 className="text-2xl font-semibold text-red-700 mb-4">What happens on Google Maps:</h3>
+          <ul className="list-none p-0 text-left text-gray-700">
+            <li className="flex items-start mb-3">
+              <span className="text-red-500 mr-3 text-2xl">❌</span>
+              <span>**Irrelevant results:** Generic searches often return chain stores or limited options, missing the specific cultural nuances.</span>
+            </li>
+            <li className="flex items-start mb-3">
+              <span className="text-red-500 mr-3 text-2xl">❌</span>
+              <span>**Hidden gems remain hidden:** Many small, authentic ethnic shops aren't optimized for mainstream search.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-3 text-2xl">❌</span>
+              <span>**Verification uncertainty:** Difficult to confirm authenticity, dietary certifications (like Halal/Kosher), or real-time stock.</span>
+            </li>
+          </ul>
+        </div>
+        <div className="w-full md:w-1/2 p-6 bg-green-50 border-2 border-green-200 rounded-xl shadow-lg">
+          <h3 className="text-2xl font-semibold text-green-700 mb-4">What happens on Ethnic:</h3>
+          <ul className="list-none p-0 text-left text-gray-700">
+            <li className="flex items-start mb-3">
+              <span className="text-green-500 mr-3 text-2xl">✅</span>
+              <span>**Precise results:** Filter by specific cultures, cuisines, or dietary needs to find exactly what you're looking for.</span>
+            </li>
+            <li className="flex items-start mb-3">
+              <span className="text-green-500 mr-3 text-2xl">✅</span>
+              <span>**Discover new favorites:** Our community-driven platform brings niche, specialized stores to your fingertips.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-500 mr-3 text-2xl">✅</span>
+              <span>**Trusted & verified:** Benefit from community reviews and our verification process for authenticity and key certifications.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--highlight-color); /* Input field focus border */
-        }
+  // Testimonials Section
+  const TestimonialsSection = () => (
+    <section className="py-16 bg-white text-center">
+      <h2 className={`text-4xl font-bold ${primaryTextColor} mb-12`}>Community Voices</h2>
+      <div className="flex flex-col md:flex-row justify-center gap-8 px-4 max-w-4xl mx-auto">
+        {/* Testimonial 1: Amaka */}
+        <div className="bg-gray-50 p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col items-center">
+          <img
+            src="https://placehold.co/80x80/2D6A4F/FAF9F6?text=👩🏽"
+            alt="Amaka's photo"
+            className="w-20 h-20 rounded-full object-cover mb-4 border-4 border-amber-500"
+          />
+          <p className="italic text-lg text-gray-800 mb-4">
+            "I used to drive 30 minutes for fufu powder — now I walk 5 minutes to the right store. Ethnic changed my life!"
+          </p>
+          <p className="font-semibold text-gray-900">— Amaka, Nigerian diaspora</p>
+        </div>
+        {/* Testimonial 2: Halal User */}
+        <div className="bg-gray-50 p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col items-center">
+          <img
+            src="https://placehold.co/80x80/F4A261/264653?text=🧔🏻"
+            alt="Omar's photo"
+            className="w-20 h-20 rounded-full object-cover mb-4 border-4 border-amber-500"
+          />
+          <p className="italic text-lg text-gray-800 mb-4">
+            "Finding genuinely certified halal options used to be a challenge. Ethnic changed that – now I easily find trusted halal butchers and markets. It’s a huge relief!"
+          </p>
+          <p className="font-semibold text-gray-900">— Omar, Halal Shopper</p>
+        </div>
+      </div>
+      <button
+        className={`mt-12 px-8 py-3 rounded-full ${primaryColor} ${textWhite} text-lg font-semibold hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-xl
+                    relative overflow-hidden group`}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <span className="relative z-10">Read More Success Stories</span>
+      </button>
+    </section>
+  );
 
-        /* --- Filters --- */
-        .filters-container {
-            display: flex;
-            overflow-x: scroll; /* Allows horizontal scrolling on small screens */
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 1rem;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-        .filters-container::-webkit-scrollbar {
-            display: none; /* Hide scrollbar for a cleaner look */
-        }
+  // Sales / Features Page content integrated into a homepage section
+  const SalesFeaturesSection = () => (
+    <section className={`py-16 bg-white text-center`}>
+      <h2 className={`text-4xl font-bold ${primaryTextColor} mb-12`}>Google Finds Stores. We Find YOUR Stores.</h2>
+      <p className="text-xl text-gray-700 mb-10 max-w-3xl mx-auto">
+        Don't settle for generic searches. Ethnic connects you directly to the authentic cultural and specialty food stores you've been looking for.
+      </p>
 
-        .filter-pill {
-            background-color: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 2rem;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-            -webkit-user-select: none; /* Prevents text selection on tap */
-            user-select: none;
-        }
-        
-        .filter-pill.active {
-            background-color: var(--primary-color);
-            color: #fff;
-            border-color: var(--primary-color);
-        }
+      {/* Feature Blocks */}
+      <div className="flex flex-wrap justify-center gap-8 px-4 max-w-5xl mx-auto mb-16">
+        <div className="w-full md:w-1/3 p-6 bg-gray-50 rounded-xl shadow-lg border border-gray-200 text-left">
+          <h3 className="text-2xl font-semibold ${primaryTextColor} mb-3 flex items-center">
+            <Globe size={30} className={`mr-3 ${highlightTextColor}`} /> Filter by Culture & Cuisine
+          </h3>
+          <p className={textGray}>Go beyond basic categories. Search specifically for African, Asian, or Middle Eastern groceries, or filter by Halal, Kosher, Vegan, or Gluten-Free options. Find exactly what your recipe calls for.</p>
+        </div>
+        <div className="w-full md:w-1/3 p-6 bg-gray-50 rounded-xl shadow-lg border border-gray-200 text-left">
+          <h3 className="text-2xl font-semibold ${primaryTextColor} mb-3 flex items-center">
+            <Users size={30} className={`mr-3 ${highlightTextColor}`} /> Real Community Reviews
+          </h3>
+          <p className={textGray}>Benefit from the collective wisdom of local families. Our community shares genuine experiences, helping you find stores that truly meet your needs and expectations.</p>
+        </div>
+        <div className="w-full md:w-1/3 p-6 bg-gray-50 rounded-xl shadow-lg border border-gray-200 text-left">
+          <h3 className="text-2xl font-semibold ${primaryTextColor} mb-3 flex items-center">
+            <Award size={30} className={`mr-3 ${highlightTextColor}`} /> Verified Authenticity & Stock
+          </h3>
+          <p className={textGray}>We work to verify stores for their authenticity and typical stock, reducing guesswork and wasted trips. Know what you'll find before you go.</p>
+        </div>
+        <div className="w-full md:w-1/3 p-6 bg-gray-50 rounded-xl shadow-lg border border-gray-200 text-left">
+          <h3 className="text-2xl font-semibold ${primaryTextColor} mb-3 flex items-center">
+            <BookOpenText size={30} className={`mr-3 ${highlightTextColor}`} /> Discover Hidden Stores
+          </h3>
+          <p className={textGray}>Many small, specialized, and family-owned ethnic stores aren't easily found on mainstream search engines. We bring these valuable community resources to light.</p>
+        </div>
+      </div>
 
-        /* --- Map Section --- */
-        #map {
-            height: 250px; /* Fixed height for the map */
-            width: 100%;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            background-color: #e0e0e0; /* Placeholder background */
-        }
+      {/* Comparison Table */}
+      <h3 className={`text-3xl font-bold ${primaryTextColor} mb-8`}>Ethnic vs. Google Maps</h3>
+      <div className="overflow-x-auto max-w-4xl mx-auto mb-16">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="py-3 px-4 text-left font-semibold text-gray-700">Feature</th>
+              <th className="py-3 px-4 text-left font-semibold text-gray-700">Google Maps</th>
+              <th className="py-3 px-4 text-left font-semibold text-blue-700 bg-blue-50">Ethnic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="py-3 px-4 border-b border-gray-200 font-medium">Specific Cultural Filters</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-red-500 font-bold">❌ Limited</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Extensive & Precise</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-4 border-b border-gray-200 font-medium">Dietary & Certification Filters</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-red-500 font-bold">❌ Basic</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Detailed (Halal, Kosher, Vegan, GF)</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-4 border-b border-gray-200 font-medium">Community Trust & Verification</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-red-500 font-bold">❌ General Reviews</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Focused & Verified</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-4 border-b border-gray-200 font-medium">Discover Niche/Hidden Stores</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-red-500 font-bold">❌ Often Missed</td>
+              <td className="py-3 px-4 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Core Mission & Expanded Listings</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        /* --- Main Content Section (for store list) --- */
-        .store-list-container {
-            padding-top: 1rem;
-        }
+      {/* Risk Reversal */}
+      <div className={`py-6 px-4 max-w-2xl mx-auto rounded-lg shadow-lg ${highlightColor} ${textWhite} text-xl font-bold mb-10`}>
+        <p>Always FREE to search — because authentic food should be accessible to everyone!</p>
+      </div>
 
-        .store-card {
-            background-color: #fff;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
+      {/* CTA Again */}
+      <button
+        className={`px-10 py-4 rounded-full ${primaryColor} ${textWhite} text-xl font-semibold hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-xl
+                    relative overflow-hidden group`}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <span className="relative z-10">Try It Now — No Signup Required!</span>
+      </button>
+    </section>
+  );
 
-        .store-card-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 0.5rem;
-            object-fit: cover;
-            margin-right: 1rem;
-            flex-shrink: 0; /* Prevent image from shrinking */
-        }
-        
-        .store-card-content {
-            flex-grow: 1;
-        }
-        
-        .store-card-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-            color: var(--accent-color);
-        }
-        
-        .store-card-tags {
-            font-size: 0.75rem;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .store-card-address {
-            font-size: 0.85rem;
-            color: var(--text-color);
-        }
-
-        .store-card-arrow {
-            font-size: 1.5rem;
-            color: var(--highlight-color);
-            margin-left: 1rem;
-        }
-
-        /* --- Store Detail Overlay --- */
-        .store-detail-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .store-detail-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .store-detail-content {
-            background-color: var(--background-color);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90%;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .store-detail-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: var(--accent-color);
-        }
-
-        .store-detail-image {
-            width: 100%;
-            height: 200px;
-            border-radius: 0.5rem;
-            object-fit: cover;
-            margin-bottom: 1rem;
-        }
-
-        .store-detail-name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .store-detail-tags {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            margin-bottom: 1rem;
-        }
-
-        .store-detail-info p {
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .store-detail-info strong {
-            color: var(--accent-color);
-        }
-
-        .store-detail-directions-btn, .suggest-recipes-btn {
-            display: block;
-            width: 100%;
-            min-width: 200px; /* Minimum width for CTA buttons */
-            padding: 0.75rem;
-            text-align: center;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 1.5rem;
-            transition: background-color 0.2s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .store-detail-directions-btn:hover {
-            background-color: #d8b35a; /* Slightly darker highlight */
-        }
-
-        .suggest-recipes-btn {
-            background-color: var(--primary-color);
-            color: #fff;
-            margin-top: 1rem; /* Adjust margin for spacing between buttons */
-        }
-
-        .suggest-recipes-btn:hover {
-            background-color: #225a41; /* Slightly darker primary */
-        }
-
-        .recipes-section {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .recipes-section h4 {
-            color: var(--accent-color);
-            margin-bottom: 0.75rem;
-        }
-
-        .recipes-section ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .recipes-section li {
-            margin-bottom: 0.75rem;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .recipes-section li::before {
-            content: '🥣'; /* Bowl emoji for list item */
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .recipes-section li strong {
-            display: block;
-            color: var(--primary-color);
-            margin-bottom: 0.2rem;
-        }
-
-        /* --- Form/Alert Styles --- */
-        .error-message {
-            color: var(--warning-color); /* Error Text */
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            text-align: center;
-        }
-
-        .success-message {
-            color: var(--primary-color); /* Success Text */
-            background-color: rgba(45, 106, 79, 0.1); /* Light green background */
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        /* --- Footer --- */
-        .footer {
-            background-color: var(--footer-bg-color);
-            padding: 1.5rem 1rem;
-            margin-top: 2rem;
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--accent-color);
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .footer nav a {
-            color: var(--accent-color);
-            text-decoration: none;
-            margin: 0 0.5rem;
-        }
-
-        .footer nav a:hover {
-            text-decoration: underline;
-        }
-
-        /* --- Mobile Responsiveness --- */
-        @media (max-width: 480px) {
-            body {
-                font-size: 15px;
-            }
-            .header-logo {
-                font-size: 1.25rem;
-            }
-            .store-detail-name {
-                font-size: 1.5rem;
-            }
-            .store-detail-directions-btn, .suggest-recipes-btn {
-                min-width: unset; /* Remove min-width on very small screens */
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        
-        <!-- Header & Nav -->
-        <header class="header">
-            <a href="#" class="header-logo">Ethnic</a>
-            <div class="header-location">London, ON</div>
-            <div class="header-menu-icon">☰</div>
-        </header>
-
-        <!-- Search Bar -->
-        <section class="search-container">
-            <input type="text" id="search-input" class="search-input" placeholder="Search by food, culture, or store name...">
-        </section>
-
-        <!-- Filters -->
-        <section class="filters-container" id="filters-container">
-            <div class="filter-pill" data-filter-type="culture" data-filter-value="African">African</div>
-            <div class="filter-pill" data-filter-type="culture" data-filter-value="Asian">Asian</div>
-            <div class="filter-pill" data-filter-type="culture" data-filter-value="Arab">Arab</div>
-            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Halal">Halal</div>
-            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Kosher">Kosher</div>
-            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Vegan">Vegan</div>
-            <div class="filter-pill" data-filter-type="dietary" data-filter-value="Gluten-free">Gluten-free</div>
-            <div class="filter-pill" data-filter-type="product" data-filter-value="Groceries">Groceries</div>
-            <div class="filter-pill" data-filter-type="product" data-filter-value="Restaurant">Restaurant</div>
-            <div class="filter-pill" data-filter-type="product" data-filter-value="Butcher">Butcher</div>
-            <div class="filter-pill" data-filter-type="product" data-filter-value="Bakery">Bakery</div>
-        </section>
-
-        <!-- Map Section -->
-        <section id="map"></section>
-
-        <!-- Store Listings -->
-        <section class="store-list-container" id="store-list-container">
-            <h2>Stores near you</h2>
-            <!-- Store cards will be dynamically inserted here by JavaScript -->
-            <p id="no-results-message" style="display: none; text-align: center; color: var(--text-color);">No stores found matching your criteria.</p>
-        </section>
-
-    </div>
-
-    <!-- Store Detail Overlay -->
-    <div class="store-detail-overlay" id="store-detail-overlay">
-        <div class="store-detail-content">
-            <span class="store-detail-close" id="store-detail-close">&times;</span>
-            <img id="detail-store-image" class="store-detail-image" src="https://placehold.co/400x200/F4A261/264653?text=Storefront" alt="Store Image">
-            <h3 class="store-detail-name" id="detail-store-name"></h3>
-            <p class="store-detail-tags" id="detail-store-tags"></p>
-            <div class="store-detail-info">
-                <p><strong>Address:</strong> <span id="detail-store-address"></span></p>
-                <p><strong>Hours:</strong> <span id="detail-store-hours"></span></p>
-                <p><strong>Contact:</strong> <span id="detail-store-contact"></span></p>
-                <p><strong>Description:</strong> <span id="detail-store-description"></span></p>
+  // Example Store Listing Section (simplified for demo)
+  const StoreListingSection = () => (
+    <section className={`py-16 ${bgGrayLight} text-center`}>
+      <h2 className={`text-4xl font-bold ${primaryTextColor} mb-12`}>Popular Ethnic Stores</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 max-w-6xl mx-auto">
+        {/* Example Store Card 1 - with gradient on header/footer */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:scale-105 transition-transform duration-300 ease-in-out">
+          <div className={`p-4 ${primaryColor} ${textWhite} font-bold text-lg rounded-t-xl bg-gradient-to-r from-blue-600 to-blue-500`}>
+            Spice Emporium
+          </div>
+          <div className="p-6">
+            <img
+              src="https://placehold.co/400x250/E0E7FF/1F2937?text=Store+Image+1"
+              alt="Spice Emporium"
+              className="w-full h-40 object-cover rounded-lg mb-4"
+              onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/400x250/E0E7FF/1F2937?text=Image+Missing"; }}
+            />
+            <p className={textGray}>Specializing in exotic spices and international ingredients.</p>
+            <div className="flex justify-between items-center mt-4">
+              <span className="font-semibold">Rating: ⭐️⭐️⭐️⭐️ (4.5)</span>
+              <button className={`px-4 py-2 rounded-full ${highlightColor} ${textWhite} text-sm font-semibold hover:bg-amber-600 transition duration-300`}>
+                View Store
+              </button>
             </div>
-            <a href="#" id="detail-store-directions-btn" target="_blank" class="store-detail-directions-btn">Get Directions</a>
-            
-            <!-- New button for Gemini API integration -->
-            <button id="suggest-recipes-btn" class="suggest-recipes-btn">✨ Suggest Recipes</button>
+          </div>
+          <div className={`p-3 ${highlightColor} ${textWhite} text-center rounded-b-xl text-sm font-medium bg-gradient-to-l from-amber-500 to-yellow-400`}>
+            Open Daily
+          </div>
+        </div>
 
-            <!-- Section to display generated recipes -->
-            <div class="recipes-section" id="recipes-section" style="display: none;">
-                <h4>Suggested Recipes:</h4>
-                <p id="recipes-loading-message" style="display: none; text-align: center; color: var(--text-color);">Generating recipes...</p>
-                <ul id="recipes-list">
-                    <!-- Recipes will be inserted here -->
-                </ul>
+        {/* Example Store Card 2 */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:scale-105 transition-transform duration-300 ease-in-out">
+          <div className={`p-4 ${primaryColor} ${textWhite} font-bold text-lg rounded-t-xl bg-gradient-to-r from-blue-600 to-blue-500`}>
+            Taste of Asia
+          </div>
+          <div className="p-6">
+            <img
+              src="https://placehold.co/400x250/FFE0E0/371F1F?text=Store+Image+2"
+              alt="Taste of Asia"
+              className="w-full h-40 object-cover rounded-lg mb-4"
+              onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/400x250/FFE0E0/371F1F?text=Image+Missing"; }}
+            />
+            <p className={textGray}>Your one-stop shop for authentic Asian groceries and fresh produce.</p>
+            <div className="flex justify-between items-center mt-4">
+              <span className="font-semibold">Rating: ⭐️⭐️⭐️⭐️⭐️ (4.9)</span>
+              <button className={`px-4 py-2 rounded-full ${highlightColor} ${textWhite} text-sm font-semibold hover:bg-amber-600 transition duration-300`}>
+                View Store
+              </button>
+            </div>
+          </div>
+          <div className={`p-3 ${highlightColor} ${textWhite} text-center rounded-b-xl text-sm font-medium bg-gradient-to-l from-amber-500 to-yellow-400`}>
+            New Arrivals Weekly
+          </div>
+        </div>
+
+        {/* Example Store Card 3 */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:scale-105 transition-transform duration-300 ease-in-out">
+          <div className={`p-4 ${primaryColor} ${textWhite} font-bold text-lg rounded-t-xl bg-gradient-to-r from-blue-600 to-blue-500`}>
+            Latin Flavors Market
+          </div>
+          <div className="p-6">
+            <img
+              src="https://placehold.co/400x250/D1FAE5/065F46?text=Store+Image+3"
+              alt="Latin Flavors Market"
+              className="w-full h-40 object-cover rounded-lg mb-4"
+              onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/400x250/D1FAE5/065F46?text=Image+Missing"; }}
+            />
+            <p className={textGray}>Bringing the vibrant tastes of Latin America to your kitchen.</p>
+            <div className="flex justify-between items-center mt-4">
+              <span className="font-semibold">Rating: ⭐️⭐️⭐️⭐️ (4.2)</span>
+              <button className={`px-4 py-2 rounded-full ${highlightColor} ${textWhite} text-sm font-semibold hover:bg-amber-600 transition duration-300`}>
+                View Store
+              </button>
+            </div>
+          </div>
+          <div className={`p-3 ${highlightColor} ${textWhite} text-center rounded-b-xl text-sm font-medium bg-gradient-to-l from-amber-500 to-yellow-400`}>
+            Fresh Tortillas Daily
+          </div>
+        </div>
+      </div>
+      <button
+        className={`mt-10 px-8 py-3 rounded-full ${primaryColor} ${textWhite} text-lg font-semibold hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-xl
+                        relative overflow-hidden group`}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <span className="relative z-10">See All Stores</span>
+      </button>
+    </section>
+  );
+
+  // About Us Modal
+  const AboutUsModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl p-8 max-w-2xl w-full shadow-2xl relative">
+        <button
+          onClick={() => setShowAboutUsModal(false)}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition duration-200"
+        >
+          <X size={24} />
+        </button>
+        <h2 className={`text-4xl font-bold ${primaryTextColor} mb-6 text-center`}>Our Story: Connecting Cultures Through Food</h2>
+        <p className={`${textGray} text-lg mb-4 leading-relaxed`}>
+          In a world craving authentic flavors and cultural connections, **Ethnic** was born from a simple yet powerful idea: to make it effortless for everyone to discover the rich tapestry of ethnic grocery stores, markets, and specialty food shops right in their local community. We believe food is a universal language, a bridge that connects us to our heritage, our memories, and each other.
+        </p>
+        <p className={`${textGray} text-lg mb-4 leading-relaxed`}>
+          Our mission is to **empower local businesses** by giving them a dedicated platform to shine, and to **enrich your culinary journey** by opening doors to ingredients and experiences you might never have found otherwise.
+        </p>
+        <h3 className={`text-2xl font-bold ${highlightTextColor} mb-4 text-center`}>Meet Our Founder, Marietta Iyinbor</h3>
+        <img
+          src="https://placehold.co/120x120/2D6A4F/FAF9F6?text=👩🏾‍💻"
+          alt="Marietta Iyinbor"
+          className="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-4 border-amber-500"
+        />
+        <p className={`${textGray} text-lg mb-4 leading-relaxed italic text-center`}>
+          "As an immigrant in Canada, I personally experienced the frustration of trying to find authentic ethnic food stores and restaurants, lost in the overwhelming and often irrelevant results of mainstream search engines. This product was born out of that very real need – to simplify the search for 'home's flavors' and help others connect with their culinary heritage."
+        </p>
+        <p className={`${textGray} text-lg mb-4 leading-relaxed`}>
+          Our promise: **We verify every store for authenticity, certification, and community trust.** We are committed to supporting local immigrant-owned businesses and celebrating the diverse culinary landscape of our community.
+        </p>
+        <div className="text-center">
+          <button
+            onClick={() => setShowAboutUsModal(false)}
+            className={`px-6 py-3 rounded-full ${highlightColor} ${textWhite} text-lg font-semibold hover:bg-amber-600 transition duration-300 ease-in-out transform hover:scale-105`}
+          >
+            Back to Discovery
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // FAQ Modal
+  const FAQModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl p-8 max-w-2xl w-full shadow-2xl relative">
+        <button
+          onClick={() => setShowFaqModal(false)}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition duration-200"
+        >
+          <X size={24} />
+        </button>
+        <h2 className={`text-4xl font-bold ${primaryTextColor} mb-8 text-center`}>Frequently Asked Questions</h2>
+
+        <div className="space-y-6 text-left">
+            {/* FAQ Item 1 */}
+            <div>
+                <h3 className="text-2xl font-semibold ${accentColor} mb-2 flex items-center">
+                    <HelpCircle size={24} className={`mr-2 ${primaryTextColor}`} /> Why can't I just use Google Maps?
+                </h3>
+                <p className={textGray}>
+                    While Google Maps is great for general searches, it often misses the nuance and specificity required for ethnic and specialty food. Ethnic offers advanced filters (by culture, dietary needs like Halal/Kosher/Vegan), highlights hidden gems, provides community-verified authenticity, and even suggests recipes. See our detailed comparison below:
+                </p>
+                {/* Re-using comparison table from SalesFeaturesSection for consistency */}
+                <div className="overflow-x-auto my-4">
+                    <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="py-2 px-3 text-left font-semibold text-gray-700">Feature</th>
+                                <th className="py-2 px-3 text-left font-semibold text-gray-700">Google Maps</th>
+                                <th className="py-2 px-3 text-left font-semibold text-blue-700 bg-blue-50">Ethnic</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="py-2 px-3 border-b border-gray-200 font-medium">Specific Cultural Filters</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-red-500 font-bold">❌ Limited</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Extensive & Precise</td>
+                            </tr>
+                            <tr>
+                                <td className="py-2 px-3 border-b border-gray-200 font-medium">Dietary & Certification Filters</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-red-500 font-bold">❌ Basic</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Detailed (Halal, Kosher, Vegan, GF)</td>
+                            </tr>
+                            <tr>
+                                <td className="py-2 px-3 border-b border-gray-200 font-medium">Community Trust & Verification</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-red-500 font-bold">❌ General Reviews</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Focused & Verified</td>
+                            </tr>
+                            <tr>
+                                <td className="py-2 px-3 border-b border-gray-200 font-medium">Discover Niche/Hidden Stores</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-red-500 font-bold">❌ Often Missed</td>
+                                <td className="py-2 px-3 border-b border-gray-200 text-green-600 font-bold bg-green-50">✅ Core Mission & Expanded Listings</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* FAQ Item 2 */}
+            <div>
+                <h3 className="text-2xl font-semibold ${accentColor} mb-2 flex items-center">
+                    <CheckCircle size={24} className={`mr-2 ${primaryTextColor}`} /> How do you verify stores?
+                </h3>
+                <p className={textGray}>
+                    We employ a multi-faceted verification process, combining **community feedback and testimonials**, direct **outreach to store owners** to confirm details and certifications, and our internal quality checks. This ensures our listings are as accurate and trustworthy as possible.
+                </p>
+            </div>
+
+            {/* FAQ Item 3 */}
+            <div>
+                <h3 className="text-2xl font-semibold ${accentColor} mb-2 flex items-center">
+                    <DollarSign size={24} className={`mr-2 ${primaryTextColor}`} /> Is Ethnic free to use?
+                </h3>
+                <p className={textGray}>
+                    Yes! **Ethnic is absolutely free for users to search and discover stores.** We believe that access to authentic cultural food should be easy and accessible for everyone. Our platform aims to connect users with businesses seamlessly.
+                </p>
+            </div>
+
+            {/* FAQ Item 4 */}
+            <div>
+                <h3 className="text-2xl font-semibold ${accentColor} mb-2 flex items-center">
+                    <PlusCircle size={24} className={`mr-2 ${primaryTextColor}`} /> Can I add a store?
+                </h3>
+                <p className={textGray}>
+                    Yes, you can! We highly encourage community involvement. If you know of a fantastic ethnic market, restaurant, or specialty store that isn't listed, please reach out to us via the "Submit a Store" link in the footer. Your contributions help make Ethnic even better for everyone!
+                </p>
             </div>
         </div>
+
+        <div className="text-center mt-8">
+          <button
+            onClick={() => setShowFaqModal(false)}
+            className={`px-6 py-3 rounded-full ${highlightColor} ${textWhite} text-lg font-semibold hover:bg-amber-600 transition duration-300 ease-in-out transform hover:scale-105`}
+          >
+            Got It!
+          </button>
+        </div>
+      </div>
     </div>
+  );
 
-    <!-- Footer -->
-    <footer class="footer">
+
+  return (
+    <div className="min-h-screen font-sans antialiased text-gray-900">
+      {/* Header */}
+      <header className="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-40">
+        <h1 className={`text-3xl font-bold ${primaryTextColor}`}>Ethnic</h1>
         <nav>
-            <a href="#">About Ethnic</a> | 
-            <a href="#">Submit a Store</a> | 
-            <a href="#">Contact</a>
+          <ul className="flex space-x-6">
+            <li><a href="#" className={`font-semibold ${primaryTextColor} hover:text-blue-800 transition duration-200`}>Home</a></li>
+            <li><a href="#" className={`font-semibold ${primaryTextColor} hover:text-blue-800 transition duration-200`}>Stores</a></li>
+            <li>
+              <button
+                onClick={() => setShowAboutUsModal(true)}
+                className={`font-semibold ${primaryTextColor} hover:text-blue-800 transition duration-200 bg-transparent border-none cursor-pointer`}
+              >
+                About Us
+              </button>
+            </li>
+            <li><a href="#" className={`font-semibold ${primaryTextColor} hover:text-blue-800 transition duration-200`}>Blog</a></li>
+            <li>
+              <button
+                onClick={() => setShowFaqModal(true)} // Link to new FAQ modal
+                className={`font-semibold ${primaryTextColor} hover:text-blue-800 transition duration-200 bg-transparent border-none cursor-pointer`}
+              >
+                FAQ
+              </button>
+            </li>
+          </ul>
         </nav>
-        <p>&copy; 2025 Ethnic. All rights reserved.</p>
-    </footer>
+      </header>
 
-    <script>
-        // Initialize Google Map variable
-        let map;
-        let markers = []; // Array to hold map markers
+      <main>
+        <HeroSection />
+        <TrustSection /> {/* Added Trust Section to homepage */}
+        <ProblemSolutionSection /> {/* Added Problem/Solution Section to homepage */}
+        <HowItWorksSection />
+        <TestimonialsSection /> {/* Added Testimonials Section to homepage */}
+        <SalesFeaturesSection /> {/* Added the integrated Sales/Features content to homepage */}
+        <StoreListingSection /> {/* Keep existing store listing section */}
+      </main>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const filtersContainer = document.getElementById('filters-container');
-            const searchInput = document.getElementById('search-input');
-            const storeListContainer = document.getElementById('store-list-container');
-            const noResultsMessage = document.getElementById('no-results-message');
-            const storeDetailOverlay = document.getElementById('store-detail-overlay');
-            const storeDetailCloseBtn = document.getElementById('store-detail-close');
-            const suggestRecipesBtn = document.getElementById('suggest-recipes-btn');
-            const recipesSection = document.getElementById('recipes-section');
-            const recipesList = document.getElementById('recipes-list');
-            const recipesLoadingMessage = document.getElementById('recipes-loading-message');
+      {/* Footer - also include the free message here */}
+      <footer className={`bg-gray-800 ${textWhite} p-8 text-center`}>
+        <p>&copy; 2024 Ethnic. All rights reserved.</p>
+        <p className="mt-2 text-md font-semibold text-green-300">
+          Your culinary adventure is always FREE to begin with Ethnic!
+        </p>
+        <div className="flex justify-center space-x-4 mt-4">
+          <a href="#" className="hover:text-blue-400 transition duration-200">Privacy Policy</a>
+          <a href="#" className="hover:text-blue-400 transition duration-200">Terms of Service</a>
+        </div>
+      </footer>
 
+      {showAboutUsModal && <AboutUsModal />}
+      {showFaqModal && <FAQModal />} {/* Render FAQ Modal conditionally */}
+    </div>
+  );
+};
 
-            // Elements for store detail overlay
-            const detailStoreImage = document.getElementById('detail-store-image');
-            const detailStoreName = document.getElementById('detail-store-name');
-            const detailStoreTags = document.getElementById('detail-store-tags');
-            const detailStoreAddress = document.getElementById('detail-store-address');
-            const detailStoreHours = document.getElementById('detail-store-hours');
-            const detailStoreContact = document.getElementById('detail-store-contact'); 
-            const detailStoreDescription = document.getElementById('detail-store-description');
-            const detailStoreDirectionsBtn = document.getElementById('detail-store-directions-btn');
-
-            let activeFilters = {
-                culture: [],
-                dietary: [],
-                product: [],
-                search: ''
-            };
-
-            // Variable to hold the currently displayed store's data for recipe suggestion
-            let currentStoreData = null;
-
-            // --- Google Maps Initialization ---
-            // This function is called by the Google Maps API script once it's loaded
-            window.initMap = function() {
-                // Default to London, ON coordinates
-                const london = { lat: 42.9849, lng: -81.2453 };
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: london,
-                    zoom: 12,
-                    mapTypeControl: false, // Hide map type controls
-                    streetViewControl: false, // Hide street view control
-                    fullscreenControl: false // Hide fullscreen control
-                });
-                fetchAndRenderStores(); // Fetch and render stores after map is initialized
-            };
-
-            // --- Filter Logic ---
-            filtersContainer.addEventListener('click', (event) => {
-                const target = event.target;
-                if (target.classList.contains('filter-pill')) {
-                    const filterType = target.dataset.filterType;
-                    const filterValue = target.dataset.filterValue;
-
-                    target.classList.toggle('active');
-
-                    if (target.classList.contains('active')) {
-                        activeFilters[filterType].push(filterValue);
-                    } else {
-                        activeFilters[filterType] = activeFilters[filterType].filter(
-                            (item) => item !== filterValue
-                        );
-                    }
-                    fetchAndRenderStores();
-                }
-            });
-
-            // --- Search Logic ---
-            searchInput.addEventListener('input', (event) => {
-                activeFilters.search = event.target.value.toLowerCase();
-                fetchAndRenderStores();
-            });
-
-            // --- Fetch and Render Stores ---
-            async function fetchAndRenderStores() {
-                // Construct query parameters based on active filters
-                const queryParams = new URLSearchParams();
-                if (activeFilters.culture.length > 0) {
-                    queryParams.append('culture', activeFilters.culture.join(','));
-                }
-                if (activeFilters.dietary.length > 0) {
-                    queryParams.append('dietary', activeFilters.dietary.join(','));
-                }
-                if (activeFilters.product.length > 0) {
-                    queryParams.append('product', activeFilters.product.join(','));
-                }
-                if (activeFilters.search) {
-                    queryParams.append('search', activeFilters.search);
-                }
-
-                try {
-                    const response = await fetch(`/api/stores?${queryParams.toString()}`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const stores = await response.json();
-                    renderStoreCards(stores);
-                    updateMapMarkers(stores); // Update map markers after fetching stores
-                } catch (error) {
-                    console.error('Error fetching stores:', error);
-                    storeListContainer.innerHTML = '<p class="error-message">Failed to load stores. Please try again later.</p>';
-                    noResultsMessage.style.display = 'none';
-                }
-            }
-
-            function renderStoreCards(stores) {
-                storeListContainer.innerHTML = '<h2>Stores near you</h2>'; // Clear previous listings
-                if (stores.length === 0) {
-                    noResultsMessage.style.display = 'block';
-                } else {
-                    noResultsMessage.style.display = 'none';
-                    stores.forEach(store => {
-                        const storeCard = document.createElement('div');
-                        storeCard.classList.add('store-card');
-                        storeCard.dataset.storeId = store.id; // Store ID for detail lookup
-
-                        // Determine image text based on store tags
-                        let imageText = 'Market';
-                        if (store.tags.includes('African')) imageText = 'African';
-                        else if (store.tags.includes('Asian')) imageText = 'Asian';
-                        else if (store.tags.includes('Halal')) imageText = 'Halal';
-                        else if (store.tags.includes('Butcher')) imageText = 'Butcher';
-                        else if (store.tags.includes('Groceries')) imageText = 'Produce';
-                        else if (store.tags.includes('Restaurant')) imageText = 'Food';
-
-
-                        storeCard.innerHTML = `
-                            <img class="store-card-image" src="https://placehold.co/80x80/2D6A4F/FAF9F6?text=${imageText}" alt="${store.name} image">
-                            <div class="store-card-content">
-                                <div class="store-card-name">${store.name}</div>
-                                <div class="store-card-tags">${store.tags.join(', ')}</div>
-                                <div class="store-card-address">${store.address}</div>
-                            </div>
-                            <div class="store-card-arrow">→</div>
-                        `;
-                        storeListContainer.appendChild(storeCard);
-
-                        // Add click listener to open detail overlay
-                        storeCard.addEventListener('click', () => openStoreDetail(store));
-                    });
-                }
-            }
-
-            // --- Google Maps Marker Update Logic ---
-            function updateMapMarkers(stores) {
-                // Clear existing markers
-                for (let i = 0; i < markers.length; i++) {
-                    markers[i].setMap(null);
-                }
-                markers = []; // Reset markers array
-
-                const bounds = new google.maps.LatLngBounds();
-
-                stores.forEach(store => {
-                    if (store.latitude && store.longitude) {
-                        const position = { lat: store.latitude, lng: store.longitude };
-                        const marker = new google.maps.Marker({
-                            position: position,
-                            map: map,
-                            title: store.name
-                        });
-
-                        // Add info window for marker
-                        const infoWindow = new google.maps.InfoWindow({
-                            content: `<strong>${store.name}</strong><br>${store.address}`
-                        });
-
-                        marker.addListener('click', () => {
-                            infoWindow.open(map, marker);
-                            openStoreDetail(store); // Also open detail overlay on marker click
-                        });
-
-                        markers.push(marker);
-                        bounds.extend(position);
-                    }
-                });
-
-                // Fit map to markers if there are any
-                if (stores.length > 0) {
-                    map.fitBounds(bounds);
-                    // If there's only one marker, set a reasonable zoom level
-                    if (stores.length === 1) {
-                        map.setZoom(14); 
-                    }
-                } else {
-                    // If no stores, center back to London
-                    map.setCenter({ lat: 42.9849, lng: -81.2453 });
-                    map.setZoom(12);
-                }
-            }
-
-
-            // --- Store Detail Overlay Logic ---
-            function openStoreDetail(store) {
-                currentStoreData = store; // Store the current store data
-                
-                // Set detail image based on store tags
-                let detailImageText = 'Storefront';
-                if (store.tags.includes('African')) detailImageText = 'African+Store';
-                else if (store.tags.includes('Asian')) detailImageText = 'Asian+Market';
-                else if (store.tags.includes('Halal')) detailImageText = 'Halal+Butcher';
-                else if (store.tags.includes('Groceries')) detailImageText = 'Produce+Aisle';
-                else if (store.tags.includes('Restaurant')) detailImageText = 'Restaurant+Interior';
-
-                detailStoreImage.src = `https://placehold.co/400x200/F4A261/264653?text=${detailImageText}`;
-                detailStoreImage.alt = `${store.name} image`;
-
-                detailStoreName.textContent = store.name;
-                detailStoreTags.textContent = store.tags.join(', ');
-                detailStoreAddress.textContent = store.address;
-                detailStoreHours.textContent = store.hours || 'Not available';
-                detailStoreContact.textContent = store.contact || 'Not available';
-                detailStoreDescription.textContent = store.description || 'No description available.';
-                
-                // Google Maps directions link
-                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.address)}`;
-                detailStoreDirectionsBtn.href = mapsUrl;
-
-                // Reset recipes section
-                recipesList.innerHTML = '';
-                recipesSection.style.display = 'none';
-                recipesLoadingMessage.style.display = 'none';
-                suggestRecipesBtn.disabled = false; // Enable button
-
-                storeDetailOverlay.classList.add('active');
-            }
-
-            storeDetailCloseBtn.addEventListener('click', () => {
-                storeDetailOverlay.classList.remove('active');
-            });
-
-            storeDetailOverlay.addEventListener('click', (event) => {
-                // Close overlay if clicked outside the content box
-                if (event.target === storeDetailOverlay) {
-                    storeDetailOverlay.classList.remove('active');
-                }
-            });
-
-            // --- Gemini API Call for Recipe Suggestion ---
-            suggestRecipesBtn.addEventListener('click', async () => {
-                if (!currentStoreData) return;
-
-                recipesSection.style.display = 'block';
-                recipesLoadingMessage.style.display = 'block';
-                recipesList.innerHTML = ''; // Clear previous recipes
-                suggestRecipesBtn.disabled = true; // Disable button during generation
-
-                const prompt = `Given the store named '${currentStoreData.name}' which is described as '${currentStoreData.description}' and specializes in the following categories: ${currentStoreData.tags.join(', ')}. Please suggest 3-5 unique and culturally relevant recipes that could be made using ingredients typically found at this type of store. For each recipe, provide only the recipe name and a very brief (1-2 sentence) description. Format the output as a numbered list.`;
-
-                try {
-                    const generatedText = await callGeminiAPI(prompt);
-                    recipesLoadingMessage.style.display = 'none';
-                    renderRecipes(generatedText);
-                } catch (error) {
-                    console.error('Failed to suggest recipes:', error);
-                    recipesLoadingMessage.textContent = 'Failed to load recipes. Please try again.';
-                    recipesLoadingMessage.classList.add('error-message'); // Apply error style
-                } finally {
-                    suggestRecipesBtn.disabled = false; // Re-enable button
-                }
-            });
-
-            async function callGeminiAPI(prompt) {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; // Leave as-is, Canvas will provide it
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-                let retries = 0;
-                const maxRetries = 5;
-                const baseDelay = 1000; // 1 second
-
-                while (retries < maxRetries) {
-                    try {
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!response.ok) {
-                            if (response.status === 429) { // Too Many Requests
-                                retries++;
-                                const delay = baseDelay * Math.pow(2, retries - 1);
-                                console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds... (Attempt ${retries}/${maxRetries})`);
-                                await new Promise(resolve => setTimeout(resolve, delay));
-                                continue; // Try again
-                            }
-                            throw new Error(`API error! status: ${response.status}`);
-                        }
-
-                        const result = await response.json();
-                        if (result.candidates && result.candidates.length > 0 &&
-                            result.candidates[0].content && result.candidates[0].content.parts &&
-                            result.candidates[0].content.parts.length > 0) {
-                            return result.candidates[0].content.parts[0].text;
-                        } else {
-                            console.error('Unexpected Gemini API response structure:', result);
-                            return 'Could not generate recipes. Please try again.';
-                        }
-                    } catch (error) {
-                        console.error('Error calling Gemini API:', error);
-                        // For other errors, we might not retry or retry fewer times
-                        throw error; // Re-throw to be caught by the caller
-                    }
-                }
-                return 'Failed to generate recipes after multiple retries.';
-            }
-
-            function renderRecipes(recipesText) {
-                recipesList.innerHTML = ''; // Clear previous recipes
-                const recipes = recipesText.split('\n').filter(line => line.trim() !== '');
-                recipes.forEach(recipeLine => {
-                    const listItem = document.createElement('li');
-                    let recipeName = '';
-                    let description = '';
-
-                    // Attempt to split by the first colon, if available
-                    const firstColonIndex = recipeLine.indexOf(':');
-                    if (firstColonIndex !== -1) {
-                        // Extract recipe name (removing potential numbering like "1. ")
-                        recipeName = recipeLine.substring(0, firstColonIndex).replace(/^\d+\.\s*/, '').trim();
-                        description = recipeLine.substring(firstColonIndex + 1).trim();
-                    } else {
-                        // If no colon, treat the whole line as the recipe name
-                        recipeName = recipeLine.replace(/^\d+\.\s*/, '').trim();
-                        description = 'No description provided.'; // Default description
-                    }
-                    
-                    if (recipeName) { // Only render if a name was found
-                        listItem.innerHTML = `<strong>${recipeName}</strong>: ${description}`;
-                        recipesList.appendChild(listItem);
-                    }
-                });
-            }
-
-            // Initial fetch is now called by initMap
-            // fetchAndRenderStores();
-        });
-    </script>
-    <!-- Google Maps API Script -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBf4oI63Sd0OCuzdw18uZT3qvutcLL966I&callback=initMap"></script>
-</body>
-</html>
+export default App;

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethnic - FAQ</title>
+    <style>
+        /* Re-using base styles from index.html for consistency */
+        :root {
+            --primary-color: #2D6A4F;
+            --secondary-color: #F4A261;
+            --accent-color: #264653;
+            --background-color: #FAF9F6;
+            --highlight-color: #E9C46A;
+            --warning-color: #E76F51;
+            --text-color: #264653;
+            --placeholder-color: #A0A0A0;
+            --footer-bg-color: #F0EDE9;
+        }
+
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        h1, h2, h3, h4 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* --- Header & Navigation (Consistent) --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            background-color: var(--background-color);
+            z-index: 1000;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header-logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .header-location {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        .header-menu-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: block;
+        }
+        .main-nav {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 1rem;
+            align-items: flex-end;
+        }
+        .main-nav.active {
+            display: flex;
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            transform: translateY(0);
+        }
+        .main-nav a:hover {
+            background-color: rgba(45, 106, 79, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Call to Action Button Style (Primary) */
+        .cta-button {
+            display: inline-block;
+            background-color: var(--highlight-color);
+            color: var(--accent-color);
+            padding: 0.8rem 1.8rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        .cta-button:hover {
+            background-color: #d8b35a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* --- Content Sections --- */
+        .content-section {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+        .content-section h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* FAQ Styling */
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .faq-item h3 {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            cursor: pointer; /* Indicates it's clickable */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-item h3 .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        .faq-item h3.active .toggle-icon {
+            transform: rotate(90deg); /* Rotate icon when active */
+        }
+        .faq-item p {
+            font-size: 0.95rem;
+            margin-left: 1.5rem; /* Indent answer */
+            display: none; /* Hidden by default */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .faq-item p.active {
+            display: block; /* Show when active */
+            max-height: 200px; /* Max height to allow transition */
+            opacity: 1;
+        }
+
+        /* Comparison Table (Re-used from features.html for "Why not Google?") */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #e0e0e0;
+            padding: 0.8rem;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: var(--footer-bg-color);
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .comparison-table td {
+            background-color: #fff;
+            font-size: 0.95rem;
+        }
+        .comparison-table .feature-name {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .comparison-table .ethnic-advantage {
+            background-color: rgba(45, 106, 79, 0.05);
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .comparison-table .check-icon {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .comparison-table .cross-icon {
+            color: var(--warning-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* --- Footer (Consistent) --- */
+        .footer {
+            background-color: var(--footer-bg-color);
+            padding: 1.5rem 1rem;
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            border-top: 1px solid #e0e0e0;
+        }
+        .footer nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+        .footer nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Mobile Responsiveness (Consistent) --- */
+        @media (min-width: 481px) {
+            .header-menu-icon {
+                display: none;
+            }
+            .main-nav {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                flex-grow: 1;
+                border-bottom: none;
+                margin-bottom: 0;
+                padding: 0;
+            }
+            .header {
+                padding: 1rem;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .header-location {
+                margin-left: auto;
+            }
+            .main-nav a {
+                padding: 0.5rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header & Nav -->
+        <header class="header">
+            <a href="index.html" class="header-logo">Ethnic</a>
+            <div class="header-location">London, ON</div>
+            <div class="header-menu-icon" id="mobile-menu-icon">☰</div>
+            <nav class="main-nav" id="main-nav">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="features.html">Features</a>
+                <a href="blog.html">Blog</a>
+                <a href="faq.html">FAQ</a>
+                <a href="index.html#store-list-container" class="cta-button">Find Stores Near Me</a>
+            </nav>
+        </header>
+
+        <section class="content-section">
+            <h1>Frequently Asked Questions</h1>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Why can't I just use Google Maps to find ethnic stores?<span class="toggle-icon">▶</span></h3>
+                <p class="faq-answer">While Google Maps is great for general searches, it often misses the nuance and specificity required for ethnic and specialty food. Ethnic offers advanced filters (by culture, dietary needs like Halal/Kosher/Vegan), highlights hidden gems, provides community-verified authenticity, and even suggests recipes. See our comparison table below for more details.</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Google Maps</th>
+                            <th>Ethnic (Local Food Finder)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="feature-name">Specific Cultural Filters</td>
+                            <td><span class="cross-icon">❌</span> Limited</td>
+                            <td class="ethnic-advantage"><span class="check-icon">✅</span> Extensive</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Dietary & Certification Filters</td>
+                            <td><span class="cross-icon">❌</span> Basic</td>
+                            <td class="ethnic-advantage"><span class="check-icon">✅</span> Detailed (Halal, Kosher, Vegan, GF)</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Community Trust & Verification</td>
+                            <td><span class="cross-icon">❌</span> General reviews</td>
+                            <td class="ethnic-advantage"><span class="check-icon">✅</span> Focused on authenticity</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Discover Niche/Hidden Stores</td>
+                            <td><span class="cross-icon">❌</span> Often Missed</td>
+                            <td class="ethnic-advantage"><span class="check-icon">✅</span> Core Mission</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Recipe Suggestions</td>
+                            <td><span class="cross-icon">❌</span> No</td>
+                            <td class="ethnic-advantage"><span class="check-icon">✅</span> Yes! (AI-powered)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">How do you verify the authenticity and stock of stores?<span class="toggle-icon">▶</span></h3>
+                <p class="faq-answer">We rely on a combination of community input, direct outreach to store owners, and our internal verification process. Our goal is to ensure the information provided is as accurate and trustworthy as possible, reflecting the needs and experiences of the diaspora community.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Is Ethnic (Local Food Finder) free to use?<span class="toggle-icon">▶</span></h3>
+                <p class="faq-answer">Yes, Ethnic is completely free to search and use. We believe that access to authentic cultural food should be easy and accessible for everyone in the community. Our current business model focuses on connecting users with businesses, and we do not charge users for searching.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Can I add a store that's not listed on Ethnic?<span class="toggle-icon">▶</span></h3>
+                <p class="faq-answer">Absolutely! We encourage our community to help us grow and improve our listings. If you know of a fantastic ethnic market, restaurant, or specialty store that isn't on our platform, please use the "Submit a Store" link in the footer. We'll review your submission and add it to our verified list!</p>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">How accurate are the location details and hours?<span class="toggle-icon">▶</span></h3>
+                <p class="faq-answer">We strive for accuracy and regularly update our store information. However, store hours and inventory can sometimes change without notice. We recommend calling ahead for critical needs. Your feedback helps us keep our information up-to-date!</p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <nav>
+            <a href="about.html">About Ethnic</a> | 
+            <a href="features.html">Features</a> |
+            <a href="blog.html">Blog</a> |
+            <a href="faq.html">FAQ</a> |
+            <a href="#">Submit a Store</a> | 
+            <a href="#">Contact</a>
+        </nav>
+        <p>&copy; 2025 Ethnic. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mobile navigation toggle (Copy-pasted for consistency)
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+            const mainNav = document.getElementById('main-nav');
+
+            if (mobileMenuIcon) {
+                mobileMenuIcon.addEventListener('click', () => {
+                    mainNav.classList.toggle('active');
+                });
+            }
+
+            // FAQ accordion functionality
+            const faqQuestions = document.querySelectorAll('.faq-question');
+
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const toggleIcon = question.querySelector('.toggle-icon');
+
+                    // Toggle active class on the question and answer
+                    question.classList.toggle('active');
+                    answer.classList.toggle('active');
+
+                    // Adjust max-height for smooth transition
+                    if (answer.classList.contains('active')) {
+                        answer.style.maxHeight = answer.scrollHeight + "px"; // Set to actual scroll height
+                    } else {
+                        answer.style.maxHeight = "0";
+                    }
+
+                    // Rotate toggle icon
+                    if (toggleIcon) {
+                        toggleIcon.textContent = question.classList.contains('active') ? '▼' : '▶';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
